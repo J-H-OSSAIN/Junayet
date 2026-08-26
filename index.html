@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junayet Hossain — Analog IC Design, Topological Photonics</title>
+<meta name="description" content="Junayet Hossain — analog and mixed-signal IC design engineer. SAR ADCs, LC-PLLs, SerDes front-ends, and topological photonic biosensing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EFEDE4;
+  --paper-2:#E7E4D9;
+  --ink:#17181C;
+  --muted:#6B6A61;
+  --rule:#C9C5B6;
+  --accent:#0000FF;
+  --accent-soft:rgba(0,0,255,.10);
+  --header-bg:rgba(239,237,228,.92);
+
+  --display:'Instrument Serif',Georgia,serif;
+  --body:'Spectral',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --pad:clamp(1.25rem,5vw,5rem);
+  --maxw:1180px;
+  color-scheme:light;
+}
+
+[data-theme="dark"]{
+  --paper:#131419;
+  --paper-2:#1B1D24;
+  --ink:#E9E7DF;
+  --muted:#8D8B82;
+  --rule:#2E3037;
+  --accent:#5C6BFF;
+  --accent-soft:rgba(92,107,255,.14);
+  --header-bg:rgba(19,20,25,.92);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:5.5rem}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-weight:300;font-size:clamp(1rem,.55vw + .9rem,1.12rem);
+  line-height:1.68;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
+
+/* ---------- utility type ---------- */
+.mono{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow{display:flex;align-items:center;gap:.9rem;margin-bottom:2.5rem}
+.eyebrow .mono{color:var(--accent);font-weight:500}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.02;margin:0 0 1.2rem;letter-spacing:-.01em}
+h3{font-family:var(--display);font-weight:400;font-size:clamp(1.35rem,2.4vw,1.75rem);line-height:1.2;margin:0 0 .5rem}
+p{margin:0 0 1.1rem;max-width:64ch}
+section{padding-block:clamp(4.5rem,11vw,8.5rem);border-top:1px solid var(--rule)}
+
+/* ---------- nav ---------- */
+header{
+  position:sticky;top:0;z-index:60;background:var(--header-bg);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:4rem}
+.brand{font-family:var(--display);font-size:1.15rem;text-decoration:none;white-space:nowrap}
+.brand span{color:var(--accent)}
+.nav ul{display:flex;gap:1.6rem;list-style:none;margin:0;padding:0;flex-wrap:wrap;justify-content:flex-end}
+.nav a{text-decoration:none;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-block:.35rem;transition:color .2s}
+.nav a i{font-style:normal;color:var(--accent);margin-right:.4em;opacity:.7}
+.nav a:hover,.nav a:focus-visible{color:var(--ink)}
+.theme-toggle{
+  appearance:none;background:none;border:1px solid var(--rule);color:var(--muted);
+  cursor:pointer;padding:.45rem .7rem;line-height:1;border-radius:0;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  transition:color .2s,border-color .2s;flex-shrink:0;
+}
+.theme-toggle:hover,.theme-toggle:focus-visible{color:var(--ink);border-color:var(--ink)}
+@media(max-width:820px){.nav ul{display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-top:0;padding-block:clamp(4rem,13vw,9rem) clamp(4rem,10vw,7rem)}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;opacity:1;pointer-events:none}
+.hero-bg .grid-minor{stroke:var(--rule);opacity:.5}
+.hero-bg .grid-major{stroke:var(--rule);opacity:1}
+.hero-bg .wave-analog{stroke:var(--ink);opacity:.32}
+.hero-bg .wave-fill{fill:var(--accent);opacity:0;animation:washCycle 7s cubic-bezier(.45,0,.55,1) infinite}
+.hero-bg .wave-quantized{
+  stroke:var(--accent);opacity:.85;
+  stroke-dasharray:5200;animation:traceCycle 7s cubic-bezier(.45,0,.55,1) infinite;
+}
+.hero-bg .sample-dot{fill:var(--accent);opacity:0;animation:dotCycle 7s ease infinite}
+@keyframes traceCycle{
+  0%{stroke-dashoffset:5200}
+  35%{stroke-dashoffset:0}
+  75%{stroke-dashoffset:0}
+  100%{stroke-dashoffset:-5200}
+}
+@keyframes washCycle{
+  0%,28%{opacity:0}
+  45%,72%{opacity:.09}
+  92%,100%{opacity:0}
+}
+@keyframes dotCycle{
+  0%,32%{opacity:0}
+  44%,74%{opacity:.95}
+  88%,100%{opacity:0}
+}
+.hero .wrap{position:relative}
+.hero-meta{display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:2.2rem}
+.hero h1{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(3.2rem,12vw,8rem);line-height:.9;letter-spacing:-.02em;
+  margin:0 0 1.6rem;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.1rem,1.4vw,1.32rem);max-width:56ch;line-height:1.55}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:2.4rem}
+.btn{
+  display:inline-block;text-decoration:none;padding:.85rem 1.6rem;border:1px solid var(--ink);
+  background:var(--ink);color:var(--paper);border-radius:999px;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.btn:hover,.btn:focus-visible{background:transparent;color:var(--ink)}
+.btn.ghost{background:transparent;border-color:var(--rule);color:var(--muted)}
+.btn.ghost:hover,.btn.ghost:focus-visible{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(2rem,5vw,4.5rem);align-items:start}
+@media(max-width:860px){.about-grid{grid-template-columns:1fr}}
+.portrait{border:1px solid var(--rule);background:var(--paper-2);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:0;overflow:hidden}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.portrait .mono{max-width:22ch;line-height:1.7}
+figcaption{margin-top:.7rem}
+.dropcap::first-letter{
+  font-family:var(--display);font-weight:400;color:var(--accent);
+  font-size:4.4em;line-height:.8;float:left;margin:.02em .1em 0 0;
+}
+blockquote{
+  margin:2.2rem 0;padding:1.3rem 0 1.3rem 1.4rem;border-left:2px solid var(--accent);
+  font-family:var(--display);font-size:1.35rem;line-height:1.35;
+}
+blockquote footer{margin-top:.7rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- timeline ---------- */
+.timeline{margin-top:3.5rem;border-top:1px solid var(--rule)}
+.entry{display:grid;grid-template-columns:9rem minmax(0,1fr);gap:clamp(1rem,3vw,2.5rem);padding-block:1.7rem;border-bottom:1px solid var(--rule)}
+@media(max-width:600px){.entry{grid-template-columns:1fr;gap:.4rem}}
+.entry h4{font-family:var(--display);font-weight:400;font-size:1.25rem;margin:0 0 .3rem}
+.entry p{margin:0;font-size:.97rem;color:var(--muted)}
+
+/* ---------- research interests ---------- */
+.interest-group{
+  border:1px solid var(--rule);border-radius:1.75rem;
+  padding:clamp(1.4rem,3vw,2.2rem);margin-top:1.4rem;background:var(--paper-2);
+}
+.interest-group > .mono{display:block;color:var(--accent);font-weight:500;margin-bottom:1.3rem}
+.interest-list{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10.5rem),1fr));
+  gap:1.1rem 1.5rem;list-style:none;margin:0;padding:0;
+}
+.interest-list li{display:flex;gap:.6rem;align-items:flex-start;font-size:.97rem;line-height:1.35}
+.interest-list svg{flex:0 0 auto;width:1.05rem;height:1.05rem;margin-top:.16rem;fill:var(--accent)}
+
+.sub-label{
+  display:block;color:var(--accent);font-weight:500;
+  margin:3.5rem 0 1rem;padding-bottom:.6rem;border-bottom:1px solid var(--rule);
+}
+.sub-label:first-of-type{margin-top:0}
+
+/* ---------- research experience ---------- */
+.rx{
+  border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:1.25rem;
+  background:var(--paper-2);padding:clamp(1.3rem,3vw,2rem);margin-bottom:1.6rem;
+}
+.rx-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:clamp(1.2rem,3vw,2.2rem);align-items:start}
+@media(max-width:820px){.rx-head{grid-template-columns:1fr}}
+.rx-head.solo{grid-template-columns:1fr}
+.rx .fig{
+  border:1px solid var(--rule);border-radius:.6rem;background:var(--paper);
+  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1rem;overflow:hidden;
+}
+.rx .fig img{width:100%;height:100%;object-fit:contain}
+.rx .fig.lit{background:#F7F6F1;padding:.5rem}
+.rx h3{margin-bottom:.5rem}
+.rx-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;margin-bottom:.7rem}
+.rx-org{font-size:.92rem;margin:0 0 .2rem}
+.rx-sup{font-size:.92rem;font-style:italic;color:var(--muted);margin:0 0 .9rem}
+.rx p.desc{font-size:.95rem;color:var(--muted);margin:0}
+.rx-block{margin-top:1.4rem;padding-left:1.1rem;border-left:2px solid var(--accent)}
+.rx-block h4{font-family:var(--body);font-weight:600;font-size:.95rem;margin:0 0 .5rem}
+.rx-block ul{margin:0;padding-left:1.1rem}
+.rx-block li{font-size:.92rem;color:var(--muted);margin-bottom:.3rem}
+
+/* ---------- significant projects ---------- */
+.proj{
+  display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);
+  gap:clamp(1.2rem,3vw,2.2rem);align-items:center;
+  padding-block:1.8rem;border-bottom:1px solid var(--rule);
+}
+.proj:first-of-type{border-top:1px solid var(--rule)}
+@media(max-width:700px){.proj{grid-template-columns:1fr}}
+.proj .fig{
+  border:1px solid var(--rule);border-radius:.6rem;background:var(--paper-2);
+  aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:.9rem;overflow:hidden;
+}
+.proj .fig img{width:100%;height:100%;object-fit:cover}
+.proj h3{font-size:1.15rem;margin-bottom:.4rem}
+.proj-meta{color:var(--accent);margin:0 0 .5rem}
+.proj p{font-size:.93rem;color:var(--muted);margin:0}
+
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.1rem}
+.tags span{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:999px;padding:.3rem .7rem;color:var(--muted);
+}
+
+/* ---------- figure slideshow ---------- */
+.slides{margin-top:1.6rem;border:1px solid var(--rule);border-radius:.9rem;background:var(--paper-2);overflow:hidden}
+.slides .stage{position:relative;aspect-ratio:21/9;background:var(--paper)}
+.slides .stage img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:.9rem;
+  opacity:0;transition:opacity .35s ease;
+}
+.slides .stage img.on{opacity:1}
+.slides .bar{display:flex;align-items:center;gap:1rem;padding:.8rem 1rem;border-top:1px solid var(--rule)}
+.slides .cap{flex:1;font-size:.88rem;color:var(--muted);margin:0;min-width:0}
+.slides .cap b{color:var(--accent);font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.15rem;font-weight:500}
+.slides .dots{display:flex;gap:.4rem}
+.slides .dots button{
+  appearance:none;border:1px solid var(--rule);background:none;border-radius:999px;
+  width:.6rem;height:.6rem;padding:0;cursor:pointer;transition:background .2s,border-color .2s;
+}
+.slides .dots button[aria-current="true"]{background:var(--accent);border-color:var(--accent)}
+.slides .nav-btn{
+  appearance:none;background:none;border:1px solid var(--rule);color:var(--muted);
+  border-radius:999px;width:1.9rem;height:1.9rem;cursor:pointer;font-size:.85rem;line-height:1;
+  transition:color .2s,border-color .2s;flex-shrink:0;
+}
+.slides .nav-btn:hover,.slides .nav-btn:focus-visible{color:var(--ink);border-color:var(--ink)}
+@media(max-width:600px){.slides .stage{aspect-ratio:4/3}}
+
+/* ---------- publications ---------- */
+.pub-group{margin-top:2.5rem}
+.pub-group:first-of-type{margin-top:0}
+.pub-group > .mono{display:block;margin-bottom:.6rem;color:var(--accent);font-weight:500}
+.pubs{border-top:1px solid var(--rule)}
+.pub{display:grid;grid-template-columns:3rem minmax(0,1fr) auto;gap:clamp(1rem,3vw,2rem);align-items:baseline;padding-block:1.6rem;border-bottom:1px solid var(--rule);transition:background .2s}
+.pub:hover{background:var(--accent-soft)}
+@media(max-width:700px){.pub{grid-template-columns:2.2rem minmax(0,1fr);}.pub .venue{grid-column:2}}
+.pub .idx{font-family:var(--mono);font-size:.7rem;color:var(--accent)}
+.pub .title{font-family:var(--display);font-size:1.2rem;line-height:1.3}
+.pub .authors{font-size:.9rem;color:var(--muted);margin-top:.25rem}
+.pub .authors .me{color:var(--ink);font-weight:600}
+.pub .title a{text-decoration:none;border-bottom:1px solid var(--rule);transition:color .2s,border-color .2s}
+.pub .title a:hover,.pub .title a:focus-visible{color:var(--accent);border-color:var(--accent)}
+.pub .venue{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+/* ---------- contact ---------- */
+.mailto{font-family:var(--display);font-size:clamp(1.4rem,4.5vw,2.6rem);text-decoration:none;border-bottom:1px solid var(--rule);display:inline-block;transition:border-color .2s,color .2s}
+.mailto:hover,.mailto:focus-visible{color:var(--accent);border-color:var(--accent)}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:3rem}
+.links a{background:var(--paper);padding:1.3rem 1.4rem;text-decoration:none;transition:background .2s}
+.links a:hover,.links a:focus-visible{background:var(--accent-soft)}
+.links strong{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;font-weight:500}
+.links span{font-size:.92rem;color:var(--muted)}
+
+footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+  .hero-bg .wave-quantized{stroke-dasharray:none}
+  .hero-bg .sample-dot{opacity:.95}
+  .hero-bg .wave-fill{opacity:.09}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap nav" aria-label="Primary">
+    <a class="brand" href="#top">Junayet Hossain<span>.</span></a>
+    <ul>
+      <li><a href="#about"><i>01</i>About</a></li>
+      <li><a href="#research"><i>02</i>Research</a></li>
+      <li><a href="#publications"><i>03</i>Publications</a></li>
+      <li><a href="#contact"><i>04</i>Contact</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">Dark</button>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <svg class="hero-bg" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <pattern id="gridMinor" width="25" height="25" patternUnits="userSpaceOnUse">
+          <path class="grid-minor" d="M25 0H0V25" fill="none" stroke-width=".6"/>
+        </pattern>
+        <pattern id="gridMajor" width="100" height="100" patternUnits="userSpaceOnUse">
+          <path class="grid-major" d="M100 0H0V100" fill="none" stroke-width="1"/>
+        </pattern>
+      </defs>
+
+      <rect width="1200" height="420" fill="url(#gridMinor)"/>
+      <rect width="1200" height="420" fill="url(#gridMajor)"/>
+
+      <!-- zero-order-hold reconstruction, filled -->
+      <path class="wave-fill" d="M0 260 H50 V200 H100 V160 H150 V140 H200 V160 H250 V200 H300 V260 H350 V300 H400 V340 H450 V360 H500 V340 H550 V300 H600 V260 H650 V200 H700 V160 H750 V140 H800 V160 H850 V200 H900 V260 H950 V300 H1000 V340 H1050 V360 H1100 V340 H1150 V300 H1200 L1200 420 L0 420 Z"/>
+
+      <!-- the underlying analog sine -->
+      <path class="wave-analog" d="M0 250 C100 103 200 103 300 250 C400 397 500 397 600 250 C700 103 800 103 900 250 C1000 397 1100 397 1200 250"
+            fill="none" stroke-width="2.4"/>
+
+      <!-- the quantized staircase -->
+      <path class="wave-quantized" d="M0 260 H50 V200 H100 V160 H150 V140 H200 V160 H250 V200 H300 V260 H350 V300 H400 V340 H450 V360 H500 V340 H550 V300 H600 V260 H650 V200 H700 V160 H750 V140 H800 V160 H850 V200 H900 V260 H950 V300 H1000 V340 H1050 V360 H1100 V340 H1150 V300 H1200"
+            fill="none" stroke-width="2.6" stroke-linejoin="miter"/>
+
+      <!-- sample instants -->
+      <g class="sample-dot">
+        <circle cx="0" cy="250" r="4"/><circle cx="50" cy="195" r="4"/><circle cx="100" cy="155" r="4"/>
+        <circle cx="150" cy="140" r="4"/><circle cx="200" cy="155" r="4"/><circle cx="250" cy="195" r="4"/>
+        <circle cx="300" cy="250" r="4"/><circle cx="350" cy="305" r="4"/><circle cx="400" cy="345" r="4"/>
+        <circle cx="450" cy="360" r="4"/><circle cx="500" cy="345" r="4"/><circle cx="550" cy="305" r="4"/>
+        <circle cx="600" cy="250" r="4"/><circle cx="650" cy="195" r="4"/><circle cx="700" cy="155" r="4"/>
+        <circle cx="750" cy="140" r="4"/><circle cx="800" cy="155" r="4"/><circle cx="850" cy="195" r="4"/>
+        <circle cx="900" cy="250" r="4"/><circle cx="950" cy="305" r="4"/><circle cx="1000" cy="345" r="4"/>
+        <circle cx="1050" cy="360" r="4"/><circle cx="1100" cy="345" r="4"/><circle cx="1150" cy="305" r="4"/>
+      </g>
+    </svg>
+
+    <div class="wrap">
+      <div class="hero-meta">
+        <span class="mono">Dhaka, Bangladesh</span>
+        <span class="mono">Analog &amp; Mixed-Signal IC Design, Topological Photonics Enthusiast</span>
+      </div>
+      <h1>Junayet<br>Hossain<em>.</em></h1>
+      <div class="actions">
+        <a class="btn" href="#contact">Get in touch</a>
+        <a class="btn ghost" href="#publications">Publications</a>
+        <a class="btn ghost" href="#">LinkedIn</a>
+        <a class="btn ghost" href="#">Google Scholar</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 01 ABOUT ============ -->
+  <section id="about">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mono">§ 01 — About</span></div>
+      <h2>About</h2>
+
+      <div class="about-grid">
+        <figure style="margin:0">
+          <div class="portrait"><img src="images/portrait.jpg" alt="Junayet Hossain"></div>
+          <figcaption class="mono">Dhaka, Bangladesh</figcaption>
+        </figure>
+
+        <div>
+          <p class="dropcap">I'm an analog IC design engineer at Ulkasemi, working on the blocks where signal integrity is won or lost: successive-approximation ADCs, dynamic comparators, integer-N PLLs, and op-amps.</p>
+          <p>My background is a B.Sc. in Electrical and Electronic Engineering from BUET. Alongside circuit work I've worked on topological photonics-based waveguides and sensors, which is where my interest in wave physics meets device design.</p>
+          <p>I'm currently applying to PhD programs, looking for groups where those two threads can run together.</p>
+
+          <blockquote>
+            Every specification is a claim about the worst case — and the worst case is the only one that ships.
+            <footer>A rule I design by</footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="entry">
+          <span class="mono">2025 — now</span>
+          <div>
+            <h4>Ulkasemi Pvt. Limited</h4>
+            <p>Analog IC Design Engineer — SAR ADCs, dynamic comparators, integer-N PLLs, and op-amps. Schematic through post-layout verification.</p>
+          </div>
+        </div>
+        <div class="entry">
+          <span class="mono">2020 — 2025</span>
+          <div>
+            <h4>Bangladesh University of Engineering and Technology</h4>
+            <p>B.Sc. in Electrical &amp; Electronic Engineering. Undergraduate research in topological photonics and nanophotonic biosensing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 RESEARCH ============ -->
+  <section id="research">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mono">§ 02 — Research</span></div>
+      <h2>Research</h2>
+      <p style="margin-bottom:2.2rem">Two threads. One runs through silicon, one through light — but both are about controlling a wave in a structure small enough that the structure and the wave stop being separable.</p>
+
+      <span class="mono sub-label">Interests</span>
+
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="seal" viewBox="0 0 24 24">
+          <path d="M12 1.6l2.1 1.6 2.6-.4 1 2.4 2.4 1-.4 2.6L21.3 12l-1.6 2.1.4 2.6-2.4 1-1 2.4-2.6-.4L12 21.3l-2.1-1.6-2.6.4-1-2.4-2.4-1 .4-2.6L2.7 12l1.6-2.1-.4-2.6 2.4-1 1-2.4 2.6.4z"/>
+          <path d="M10.8 15.4l-3-3 1.3-1.3 1.7 1.7 4-4 1.3 1.3z" fill="#fff"/>
+        </symbol>
+      </svg>
+
+      <div class="interest-group">
+        <span class="mono">Analog &amp; Mixed-Signal</span>
+        <ul class="interest-list">
+          <li><svg><use href="#seal"/></svg>SAR ADCs</li>
+          <li><svg><use href="#seal"/></svg>Data Converters</li>
+          <li><svg><use href="#seal"/></svg>Dynamic Comparators</li>
+          <li><svg><use href="#seal"/></svg>Integer-N PLLs</li>
+          <li><svg><use href="#seal"/></svg>Operational Amplifiers</li>
+          <li><svg><use href="#seal"/></svg>Low-Power Analog Design</li>
+        </ul>
+      </div>
+
+      <div class="interest-group">
+        <span class="mono">Photonics</span>
+        <ul class="interest-list">
+          <li><svg><use href="#seal"/></svg>Quantum Photonics</li>
+          <li><svg><use href="#seal"/></svg>Topological Photonics</li>
+          <li><svg><use href="#seal"/></svg>Non-linear Photonics</li>
+          <li><svg><use href="#seal"/></svg>Nano-Photonics</li>
+          <li><svg><use href="#seal"/></svg>Optics</li>
+        </ul>
+      </div>
+
+      <span class="mono sub-label">Research experience</span>
+
+      <article class="rx">
+        <div class="rx-head solo">
+          <div>
+            <h3>Topological Valley-Hall Photonic Crystal for Cell Carcinoma Detection</h3>
+            <div class="rx-meta">
+              <span class="mono">Feb 2024 — Feb 2025</span>
+              <span class="mono">Topological photonics</span>
+            </div>
+            <p class="rx-org">Undergraduate thesis — BUET</p>
+            <p class="rx-sup">Supervisor: Dr. Mohammed Imamul Hassan Bhuiyan, Professor, EEE, BUET</p>
+            <p class="desc">Topologically protected edge-state guiding in a valley-Hall photonic crystal, applied to label-free detection of early-stage carcinoma.</p>
+          </div>
+        </div>
+
+        <div class="slides" id="journalSlides">
+          <div class="stage">
+            <img class="on" src="images/fig-photonic-strip.png" alt="Photonic strip unit cell, band structure, and field profile at 6.5245 THz">
+            <img src="images/fig-cavity-modes.png" alt="Coupling regime between cavity and waveguide with resonant mode profiles at 6.2315 and 6.5172 THz">
+            <img src="images/fig-defect-robustness.png" alt="Source-to-receiver propagation past an introduced defect at 6.2065 THz">
+            <img src="images/fig-sensing-setup.png" alt="Sensing setup and transmission spectra for five cancer cell lines">
+          </div>
+          <div class="bar">
+            <button class="nav-btn" type="button" data-step="-1" aria-label="Previous figure">&#8249;</button>
+            <p class="cap">
+              <b>Figure 1 of 4</b>
+            </p>
+            <div class="dots" role="tablist" aria-label="Select figure"></div>
+            <button class="nav-btn" type="button" data-step="1" aria-label="Next figure">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="rx-block">
+          <h4>Key contributions</h4>
+          <ul>
+            <li>Designed and simulated an edge-state waveguide showing zero backscattering under defects</li>
+            <li>Characterised valley-dependent edge modes for loss-resistant optical propagation</li>
+            <li>Exploited topological light confinement to build a highly sensitive biosensor</li>
+          </ul>
+        </div>
+
+        <div class="tags"><span>MEEP</span><span>Lumerical FDTD</span><span>COMSOL</span><span>Valley-Hall</span></div>
+      </article>
+
+      <article class="rx">
+        <div class="rx-head">
+          <div class="fig lit"><img src="images/fig-pll-architecture.png" alt="PLL architecture: analog loop with PFD, charge pump, loop filter, VCO, divide-by-128, and AFC block with binary-search FSM driving the capacitor bank"></div>
+          <div>
+            <h3>6.4 GHz Integer-N LC-PLL with 32-Band Binary-Search AFC</h3>
+            <div class="rx-meta">
+              <span class="mono">Conference paper · IEEE MARSCON 2026</span>
+              <span class="mono">Frequency synthesis</span>
+            </div>
+            <p class="rx-org">Ulkasemi Pvt. Limited</p>
+            <p class="rx-sup">22 nm FD-SOI · for 5G NR upper mid-band synthesis</p>
+            <p class="desc">Charge-pump PLL built around a multi-band LC-VCO with binary-search automatic frequency calibration.</p>
+          </div>
+        </div>
+
+        <div class="rx-block">
+          <h4>Key contributions</h4>
+          <ul>
+            <li>Multi-band LC-VCO with 32-band binary-search AFC loop</li>
+            <li>Charge-pump and loop-filter design at 6.4 GHz</li>
+            <li>Verified across process, voltage, and temperature corners</li>
+          </ul>
+        </div>
+
+        <div class="tags"><span>22 nm FD-SOI</span><span>LC-VCO</span><span>AFC</span><span>PVT</span></div>
+      </article>
+
+      <article class="rx">
+        <div class="rx-head">
+          <div class="fig lit"><img src="images/fig-comparator-schematic.png" alt="Transistor-level schematic of the two-stage dynamic comparator, showing the clocked preamplifier stage and the cross-coupled latch"></div>
+          <div>
+            <h3>71.2 µW 149 ps Two-Stage Dynamic Comparator</h3>
+            <div class="rx-meta">
+              <span class="mono">Conference paper · IEEE MARSCON 2026</span>
+              <span class="mono">Comparators</span>
+            </div>
+            <p class="rx-org">Ulkasemi Pvt. Limited</p>
+            <p class="rx-sup">65 nm CMOS · for SAR ADCs in IEEE 802.11ax receivers</p>
+            <p class="desc">Two-stage dynamic comparator designed for high-speed successive-approximation converters.</p>
+          </div>
+        </div>
+
+        <div class="rx-block">
+          <h4>Key contributions</h4>
+          <ul>
+            <li>71.2 µW power consumption at 149 ps propagation delay</li>
+            <li>Two-stage topology targeting high-speed SAR ADC front-ends</li>
+          </ul>
+        </div>
+
+        <div class="tags"><span>65 nm CMOS</span><span>Dynamic latch</span><span>SAR front-end</span></div>
+      </article>
+
+      <article class="rx">
+        <div class="rx-head">
+          <div class="fig lit"><img src="images/fig-amc-pipeline.png" alt="AMC pipeline: RadioML 2018.01A and HisarMod 2019.1 through AWGN, Rayleigh and Rician channels, into parallel SE-dilated CNN and DFE branches combined by an SNR-adaptive ensemble"></div>
+          <div>
+            <h3>SNR-Adaptive Ensemble for Automatic Modulation Classification</h3>
+            <div class="rx-meta">
+              <span class="mono">Conference paper · IEEE MARSCON 2026</span>
+              <span class="mono">Signal processing</span>
+            </div>
+            <p class="rx-org">With M. Rahman and M. I. H. Bhuiyan</p>
+            <p class="rx-sup">Fading-channel classification</p>
+            <p class="desc">Ensemble of an SE-dilated CNN and a residual DFENet, adapted by signal-to-noise ratio, for automatic modulation classification under fading channels.</p>
+          </div>
+        </div>
+
+        <div class="rx-block">
+          <h4>Key contributions</h4>
+          <ul>
+            <li>Evaluated on RadioML 2018.01A and HisarMod 2019.1 over AWGN, Rayleigh, and Rician (K = 6 dB) channels</li>
+            <li>Parallel branches: an SE-dilated residual CNN with statistics pooling, and a DFE/FEN network with residual skips</li>
+            <li>SNR-adaptive ensemble weighting across low, mid, and high SNR regimes</li>
+            <li>Add classification accuracy achieved</li>
+          </ul>
+        </div>
+
+        <div class="tags"><span>Python</span><span>Deep learning</span><span>RadioML</span><span>Fading channels</span></div>
+      </article>
+
+
+      <span class="mono sub-label">Projects</span>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — RTL block diagram or PnR view</span></div>
+        <div>
+          <h3>12-bit Rotator</h3>
+          <p class="proj-meta mono">Dec 2024 · Cadence, EDA Playground</p>
+          <p>RTL design and testbench in SystemVerilog, with synthesis and place-and-route in Cadence. Timing and functional coverage verified.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — tracker rig or yield comparison</span></div>
+        <div>
+          <h3>Dual-Axis MPPT Solar Tracker</h3>
+          <p class="proj-meta mono">Dec 2024 · Arduino UNO, TinkerCAD</p>
+          <p>Tracked the maximum power point across both axes using LDR-based feedback, improving energy yield over a fixed-mount baseline.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — bandgap schematic or TC curve</span></div>
+        <div>
+          <h3>Bandgap Reference Voltage Generator</h3>
+          <p class="proj-meta mono">Jan 2024 · Cadence</p>
+          <p>900 mV reference with 20 ppm/°C temperature coefficient, integrating CTAT and PTAT generators, cascode current mirrors, and active noise filtering.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — single-line diagram</span></div>
+        <div>
+          <h3>Electrical Service Design</h3>
+          <p class="proj-meta mono">Dec 2024 · AutoCAD</p>
+          <p>Full electrical layout for a 10-storey, 2-unit residential building, covering distribution, wiring, and safety compliance.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — machine build or engraved sample</span></div>
+        <div>
+          <h3>Multi-functional CNC Machine</h3>
+          <p class="proj-meta mono">Jul 2023 · Arduino, CNC Shield, laserGRBL</p>
+          <p>Three-axis CNC supporting drawing, laser engraving, and material cutting, driven by G-code through laserGRBL.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — PCB render or board photo</span></div>
+        <div>
+          <h3>STM32 Blue Pill Dev Board</h3>
+          <p class="proj-meta mono">Jul 2023 · STM32CubeIDE, Altium</p>
+          <p>Low-cost Nucleo replacement with GPIO, Timer, EXTI, ADC, and SysTick configured, on a custom PCB laid out in Altium.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — schematic or hardware setup</span></div>
+        <div>
+          <h3>4-bit ALU with Memory</h3>
+          <p class="proj-meta mono">Jul 2023 · Proteus, logic gates</p>
+          <p>IC-gate-based arithmetic logic unit with register memory, simulated in Proteus and verified on hardware.</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="fig"><span class="mono">Figure — gameplay screenshot</span></div>
+        <div>
+          <h3>Ping Pong Game</h3>
+          <p class="proj-meta mono">2022 · MATLAB</p>
+          <p>Interactive game with real-time collision physics and score tracking.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 04 PUBLICATIONS ============ -->
+  <section id="publications">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mono">§ 03 — The record</span></div>
+      <h2>Publications</h2>
+      <p style="margin-bottom:2rem">Peer-reviewed work and manuscripts under review. Replace the placeholder rows below with your full list.</p>
+
+      <div class="pub-group">
+        <span class="mono">Journal</span>
+        <div class="pubs">
+          <article class="pub">
+            <span class="idx">J1</span>
+            <div>
+              <div class="title"><a href="https://arxiv.org/abs/2509.05690">Harnessing Topological Valley-Hall States in Photonic Crystals for Label-Free Refractive-Index Discrimination of Cancer Cell Lines</a></div>
+              <div class="authors"><span class="me">J. Hossain</span>, S. M. Choudhury, and M. I. H. Bhuiyan</div>
+            </div>
+            <span class="venue">Next Materials, Elsevier · under review · arXiv:2509.05690</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="pub-group">
+        <span class="mono">Conference</span>
+        <div class="pubs">
+          <article class="pub">
+            <span class="idx">C1</span>
+            <div>
+              <div class="title">A 6.4 GHz Integer-N LC-PLL with 32-Band Binary-Search AFC in 22 nm FD-SOI for 5G NR Upper Mid-Band Frequency Synthesis</div>
+              <div class="authors"><span class="me">J. Hossain</span></div>
+            </div>
+            <span class="venue">IEEE MARSCON · Aug 2026</span>
+          </article>
+          <article class="pub">
+            <span class="idx">C2</span>
+            <div>
+              <div class="title">A 71.2 µW 149 ps Two-Stage Dynamic Comparator in 65 nm CMOS for SAR ADCs in IEEE 802.11ax Wi-Fi 6 Receivers</div>
+              <div class="authors"><span class="me">J. Hossain</span> and S. Bhuiyan</div>
+            </div>
+            <span class="venue">IEEE MARSCON · Aug 2026</span>
+          </article>
+          <article class="pub">
+            <span class="idx">C3</span>
+            <div>
+              <div class="title">SNR-Adaptive Ensemble of SE-Dilated CNN and Residual DFENet for Automatic Modulation Classification under Fading Channels</div>
+              <div class="authors"><span class="me">J. Hossain</span>, M. Rahman, and M. I. H. Bhuiyan</div>
+            </div>
+            <span class="venue">IEEE MARSCON · Aug 2026</span>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 CONTACT ============ -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mono">§ 04 — Correspondence</span></div>
+      <h2>Working on something<br>similar? <em style="font-family:var(--display);font-style:italic;color:var(--accent)">Write to me.</em></h2>
+      <p>Happy to talk about converter architectures, PLL debugging, photonic band structures, or PhD applications.</p>
+
+      <a class="mailto" href="mailto:junayethossain260@gmail.com">junayethossain260@gmail.com</a>
+
+      <div class="links">
+        <a href="#"><strong>LinkedIn</strong><span>Profile</span></a>
+        <a href="#"><strong>Scholar</strong><span>Google Scholar</span></a>
+        <a href="#"><strong>GitHub</strong><span>Repositories</span></a>
+        <a href="#"><strong>CV</strong><span>Download PDF</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="wrap" style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;width:100%">
+      <span class="mono">© 2026 Junayet Hossain</span>
+      <span class="mono">Set in Instrument Serif, Spectral &amp; IBM Plex Mono</span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var box = document.getElementById('journalSlides');
+  if(!box) return;
+  var imgs = box.querySelectorAll('.stage img');
+  var dots = box.querySelector('.dots');
+  var capNum = box.querySelector('.cap b');
+  var i = 0;
+
+  imgs.forEach(function(_, n){
+    var d = document.createElement('button');
+    d.type = 'button';
+    d.setAttribute('aria-label', 'Figure ' + (n+1));
+    d.addEventListener('click', function(){ go(n); });
+    dots.appendChild(d);
+  });
+
+  function go(n){
+    i = (n + imgs.length) % imgs.length;
+    imgs.forEach(function(im, k){ im.classList.toggle('on', k === i); });
+    dots.querySelectorAll('button').forEach(function(d, k){
+      d.setAttribute('aria-current', k === i);
+    });
+    capNum.textContent = 'Figure ' + (i+1) + ' of ' + imgs.length;
+  }
+
+  box.querySelectorAll('.nav-btn').forEach(function(b){
+    b.addEventListener('click', function(){ go(i + parseInt(b.dataset.step, 10)); });
+  });
+  box.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ e.preventDefault(); go(i+1); }
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); go(i-1); }
+  });
+  go(0);
+})();
+
+(function(){
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+
+  function apply(dark){
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.textContent = dark ? 'Light' : 'Dark';
+    btn.setAttribute('aria-pressed', dark);
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+  apply(true);
+  btn.addEventListener('click', function(){
+    apply(root.getAttribute('data-theme') !== 'dark');
+  });
+})();
+</script>
+</body>
+</html>
