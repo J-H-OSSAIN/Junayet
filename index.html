@@ -24,7 +24,7 @@
   --mono:'IBM Plex Mono',ui-monospace,monospace;
 
   --pad:clamp(1.25rem,5vw,5rem);
-  --maxw:1180px;
+  --maxw:1400px;
   color-scheme:light;
 }
 
@@ -59,7 +59,7 @@ img{max-width:100%;display:block}
 .eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
 h2{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.02;margin:0 0 1.2rem;letter-spacing:-.01em}
 h3{font-family:var(--display);font-weight:400;font-size:clamp(1.35rem,2.4vw,1.75rem);line-height:1.2;margin:0 0 .5rem}
-p{margin:0 0 1.1rem;max-width:64ch}
+p{margin:0 0 1.1rem;max-width:72ch}
 section{padding-block:clamp(4.5rem,11vw,8.5rem);border-top:1px solid var(--rule)}
 
 /* ---------- nav ---------- */
@@ -81,6 +81,38 @@ header{
   transition:color .2s,border-color .2s;flex-shrink:0;
 }
 .theme-toggle:hover,.theme-toggle:focus-visible{color:var(--ink);border-color:var(--ink)}
+.nav-toggle{display:none}
+@media(max-width:820px){
+  .nav-toggle{
+    display:block;appearance:none;background:none;border:1px solid var(--rule);color:var(--muted);
+    cursor:pointer;padding:.45rem .7rem;line-height:1;
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  }
+  .nav ul{
+    display:none;position:absolute;top:100%;left:0;right:0;
+    flex-direction:column;gap:0;background:var(--paper);
+    border-bottom:1px solid var(--rule);padding:.5rem var(--pad) 1rem;
+  }
+  .nav ul.open{display:flex}
+  .nav ul li{border-top:1px solid var(--rule)}
+  .nav ul a{display:block;padding:.9rem 0;font-size:.72rem}
+  header .nav{position:relative}
+}
+
+/* ---------- lightbox ---------- */
+.zoomable{cursor:zoom-in}
+#lightbox{
+  position:fixed;inset:0;z-index:200;display:none;
+  align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);
+  background:rgba(8,9,12,.94);cursor:zoom-out;
+}
+#lightbox.open{display:flex}
+#lightbox img{max-width:100%;max-height:100%;object-fit:contain;background:#F7F6F1;padding:1rem;border-radius:.5rem}
+#lightbox .close{
+  position:absolute;top:1rem;right:1rem;appearance:none;background:none;
+  border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;
+  width:2.2rem;height:2.2rem;cursor:pointer;font-size:1rem;line-height:1;
+}
 @media(max-width:820px){.nav ul{display:none}}
 
 /* ---------- hero ---------- */
@@ -120,16 +152,17 @@ header{
 }
 .hero h1 em{font-style:italic;color:var(--accent)}
 .lede{font-size:clamp(1.1rem,1.4vw,1.32rem);max-width:56ch;line-height:1.55}
-.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:2.4rem}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:calc(2.4rem + 1em)}
 .btn{
-  display:inline-block;text-decoration:none;padding:.85rem 1.6rem;border:1px solid var(--ink);
-  background:var(--ink);color:var(--paper);border-radius:999px;
+  display:inline-block;text-decoration:none;padding:.85rem 1.6rem;
+  background:var(--paper-2);border:1px solid var(--rule);color:var(--ink);
+  border-radius:1.25rem;
   font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
-  transition:background .2s,color .2s,border-color .2s;
+  transition:background .2s,color .2s,border-color .2s,transform .2s;
 }
-.btn:hover,.btn:focus-visible{background:transparent;color:var(--ink)}
-.btn.ghost{background:transparent;border-color:var(--rule);color:var(--muted)}
-.btn.ghost:hover,.btn.ghost:focus-visible{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.btn:hover,.btn:focus-visible{background:var(--accent-soft);border-color:var(--accent);transform:translateY(-2px)}
+.btn.ghost{color:var(--muted)}
+.btn.ghost:hover,.btn.ghost:focus-visible{color:var(--ink);background:var(--accent-soft);border-color:var(--accent)}
 
 /* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(2rem,5vw,4.5rem);align-items:start}
@@ -142,11 +175,6 @@ figcaption{margin-top:.7rem}
   font-family:var(--display);font-weight:400;color:var(--accent);
   font-size:4.4em;line-height:.8;float:left;margin:.02em .1em 0 0;
 }
-blockquote{
-  margin:2.2rem 0;padding:1.3rem 0 1.3rem 1.4rem;border-left:2px solid var(--accent);
-  font-family:var(--display);font-size:1.35rem;line-height:1.35;
-}
-blockquote footer{margin-top:.7rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
 /* ---------- timeline ---------- */
 .timeline{margin-top:3.5rem;border-top:1px solid var(--rule)}
@@ -189,6 +217,13 @@ blockquote footer{margin-top:.7rem;font-family:var(--mono);font-size:.68rem;lett
 }
 .rx .fig img{width:100%;height:100%;object-fit:contain}
 .rx .fig.lit{background:#F7F6F1;padding:.5rem}
+.figwide{
+  margin-top:1.6rem;border:1px solid var(--rule);border-radius:.9rem;
+  background:var(--paper);aspect-ratio:21/9;overflow:hidden;
+}
+.figwide img{width:100%;height:100%;object-fit:contain;padding:.9rem}
+.figwide.lit{background:#F7F6F1}
+@media(max-width:600px){.figwide{aspect-ratio:4/3}}
 .rx h3{margin-bottom:.5rem}
 .rx-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;margin-bottom:.7rem}
 .rx-org{font-size:.92rem;margin:0 0 .2rem}
@@ -201,18 +236,39 @@ blockquote footer{margin-top:.7rem;font-family:var(--mono);font-size:.68rem;lett
 
 /* ---------- significant projects ---------- */
 .proj{
-  display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);
-  gap:clamp(1.2rem,3vw,2.2rem);align-items:center;
-  padding-block:1.8rem;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,.9fr);
+  gap:clamp(1.2rem,3vw,2.4rem);align-items:center;
+  padding:1.6rem 0 1.6rem 1.2rem;border-bottom:1px solid var(--rule);
+  border-left:2px solid transparent;transition:border-color .2s,background .2s;
 }
 .proj:first-of-type{border-top:1px solid var(--rule)}
+.proj:hover{border-left-color:var(--accent);background:var(--accent-soft)}
 @media(max-width:700px){.proj{grid-template-columns:1fr}}
 .proj .fig{
-  border:1px solid var(--rule);border-radius:.6rem;background:var(--paper-2);
+  border:1px solid var(--rule);border-radius:.6rem;background:var(--paper);
   aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:.9rem;overflow:hidden;
+  text-align:center;padding:.8rem;overflow:hidden;
 }
 .proj .fig img{width:100%;height:100%;object-fit:cover}
+.proj .fig.lit{background:#F7F6F1;padding:.4rem}
+.proj .fig .mono{font-size:.6rem;line-height:1.6;opacity:.7}
+.report{
+  display:inline-block;margin-top:.7rem;text-decoration:none;
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);border-bottom:1px solid transparent;transition:border-color .2s;
+}
+.report:hover,.report:focus-visible{border-bottom-color:var(--accent)}
+.proj.has-fig{
+  display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,.85fr);
+  gap:clamp(1.2rem,3vw,2.5rem);align-items:center;padding-right:1rem;
+}
+.proj.has-fig .fig{
+  border:1px solid var(--rule);border-radius:.6rem;background:#F7F6F1;
+  aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
+  padding:.5rem;overflow:hidden;
+}
+.proj.has-fig .fig img{width:100%;height:100%;object-fit:contain;cursor:zoom-in}
+@media(max-width:700px){.proj.has-fig{grid-template-columns:1fr;padding-right:0}}
 .proj h3{font-size:1.15rem;margin-bottom:.4rem}
 .proj-meta{color:var(--accent);margin:0 0 .5rem}
 .proj p{font-size:.93rem;color:var(--muted);margin:0}
@@ -264,12 +320,28 @@ blockquote footer{margin-top:.7rem;font-family:var(--mono);font-size:.68rem;lett
 .pub .title a:hover,.pub .title a:focus-visible{color:var(--accent);border-color:var(--accent)}
 .pub .venue{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 
+/* ---------- awards ---------- */
+.awards{border-top:1px solid var(--rule)}
+.award{
+  display:grid;grid-template-columns:6rem minmax(0,1fr);gap:clamp(1rem,3vw,2.5rem);
+  padding-block:1.2rem;border-bottom:1px solid var(--rule);align-items:baseline;
+}
+@media(max-width:600px){.award{grid-template-columns:1fr;gap:.2rem}}
+.award .yr{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--accent)}
+.award p{margin:0;font-size:.97rem}
+.award b{font-weight:600}
+.award span.where{color:var(--muted)}
+
 /* ---------- contact ---------- */
 .mailto{font-family:var(--display);font-size:clamp(1.4rem,4.5vw,2.6rem);text-decoration:none;border-bottom:1px solid var(--rule);display:inline-block;transition:border-color .2s,color .2s}
 .mailto:hover,.mailto:focus-visible{color:var(--accent);border-color:var(--accent)}
-.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:3rem}
-.links a{background:var(--paper);padding:1.3rem 1.4rem;text-decoration:none;transition:background .2s}
-.links a:hover,.links a:focus-visible{background:var(--accent-soft)}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.9rem;margin-top:2.5rem}
+.links a{
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:1.25rem;
+  padding:1.3rem 1.5rem;text-decoration:none;
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.links a:hover,.links a:focus-visible{background:var(--accent-soft);border-color:var(--accent);transform:translateY(-2px)}
 .links strong{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;font-weight:500}
 .links span{font-size:.92rem;color:var(--muted)}
 
@@ -290,12 +362,14 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
 <header>
   <nav class="wrap nav" aria-label="Primary">
     <a class="brand" href="#top">Junayet Hossain<span>.</span></a>
-    <ul>
+    <ul id="navList">
       <li><a href="#about"><i>01</i>About</a></li>
       <li><a href="#research"><i>02</i>Research</a></li>
       <li><a href="#publications"><i>03</i>Publications</a></li>
-      <li><a href="#contact"><i>04</i>Contact</a></li>
+      <li><a href="#awards"><i>04</i>Awards</a></li>
+      <li><a href="#contact"><i>05</i>Contact</a></li>
     </ul>
+    <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navList">Menu</button>
     <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">Dark</button>
   </nav>
 </header>
@@ -350,8 +424,8 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
       <div class="actions">
         <a class="btn" href="#contact">Get in touch</a>
         <a class="btn ghost" href="#publications">Publications</a>
-        <a class="btn ghost" href="#">LinkedIn</a>
-        <a class="btn ghost" href="#">Google Scholar</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/junayet-hossain-a4bb9b34b/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn ghost" href="https://scholar.google.com/citations?user=zFaVwYsAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>
       </div>
     </div>
   </section>
@@ -372,11 +446,6 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
           <p class="dropcap">I'm an analog IC design engineer at Ulkasemi, working on the blocks where signal integrity is won or lost: successive-approximation ADCs, dynamic comparators, integer-N PLLs, and op-amps.</p>
           <p>My background is a B.Sc. in Electrical and Electronic Engineering from BUET. Alongside circuit work I've worked on topological photonics-based waveguides and sensors, which is where my interest in wave physics meets device design.</p>
           <p>I'm currently applying to PhD programs, looking for groups where those two threads can run together.</p>
-
-          <blockquote>
-            Every specification is a claim about the worst case — and the worst case is the only one that ships.
-            <footer>A rule I design by</footer>
-          </blockquote>
         </div>
       </div>
 
@@ -385,14 +454,21 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
           <span class="mono">2025 — now</span>
           <div>
             <h4>Ulkasemi Pvt. Limited</h4>
-            <p>Analog IC Design Engineer — SAR ADCs, dynamic comparators, integer-N PLLs, and op-amps. Schematic through post-layout verification.</p>
+            <p>Analog IC Design Engineer</p>
           </div>
         </div>
         <div class="entry">
           <span class="mono">2020 — 2025</span>
           <div>
             <h4>Bangladesh University of Engineering and Technology</h4>
-            <p>B.Sc. in Electrical &amp; Electronic Engineering. Undergraduate research in topological photonics and nanophotonic biosensing.</p>
+            <p>B.Sc. in Electrical &amp; Electronic Engineering.</p>
+          </div>
+        </div>
+        <div class="entry">
+          <span class="mono">2017 — 2019</span>
+          <div>
+            <h4>Notre Dame College, Dhaka</h4>
+            <p>Higher Secondary Certificate.</p>
           </div>
         </div>
       </div>
@@ -420,8 +496,7 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
         <ul class="interest-list">
           <li><svg><use href="#seal"/></svg>SAR ADCs</li>
           <li><svg><use href="#seal"/></svg>Data Converters</li>
-          <li><svg><use href="#seal"/></svg>Dynamic Comparators</li>
-          <li><svg><use href="#seal"/></svg>Integer-N PLLs</li>
+          <li><svg><use href="#seal"/></svg>PLLs</li>
           <li><svg><use href="#seal"/></svg>Operational Amplifiers</li>
           <li><svg><use href="#seal"/></svg>Low-Power Analog Design</li>
         </ul>
@@ -484,8 +559,7 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
       </article>
 
       <article class="rx">
-        <div class="rx-head">
-          <div class="fig lit"><img src="images/fig-pll-architecture.png" alt="PLL architecture: analog loop with PFD, charge pump, loop filter, VCO, divide-by-128, and AFC block with binary-search FSM driving the capacitor bank"></div>
+        <div class="rx-head solo">
           <div>
             <h3>6.4 GHz Integer-N LC-PLL with 32-Band Binary-Search AFC</h3>
             <div class="rx-meta">
@@ -497,6 +571,8 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
             <p class="desc">Charge-pump PLL built around a multi-band LC-VCO with binary-search automatic frequency calibration.</p>
           </div>
         </div>
+
+        <div class="figwide lit"><img src="images/fig-pll-architecture.png" alt="PLL architecture: analog loop with PFD, charge pump, loop filter, VCO, divide-by-128, and AFC block with binary-search FSM driving the capacitor bank"></div>
 
         <div class="rx-block">
           <h4>Key contributions</h4>
@@ -511,8 +587,7 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
       </article>
 
       <article class="rx">
-        <div class="rx-head">
-          <div class="fig lit"><img src="images/fig-comparator-schematic.png" alt="Transistor-level schematic of the two-stage dynamic comparator, showing the clocked preamplifier stage and the cross-coupled latch"></div>
+        <div class="rx-head solo">
           <div>
             <h3>71.2 µW 149 ps Two-Stage Dynamic Comparator</h3>
             <div class="rx-meta">
@@ -524,6 +599,8 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
             <p class="desc">Two-stage dynamic comparator designed for high-speed successive-approximation converters.</p>
           </div>
         </div>
+
+        <div class="figwide lit"><img src="images/fig-comparator-schematic.png" alt="Transistor-level schematic of the two-stage dynamic comparator, showing the clocked preamplifier stage and the cross-coupled latch"></div>
 
         <div class="rx-block">
           <h4>Key contributions</h4>
@@ -537,8 +614,7 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
       </article>
 
       <article class="rx">
-        <div class="rx-head">
-          <div class="fig lit"><img src="images/fig-amc-pipeline.png" alt="AMC pipeline: RadioML 2018.01A and HisarMod 2019.1 through AWGN, Rayleigh and Rician channels, into parallel SE-dilated CNN and DFE branches combined by an SNR-adaptive ensemble"></div>
+        <div class="rx-head solo">
           <div>
             <h3>SNR-Adaptive Ensemble for Automatic Modulation Classification</h3>
             <div class="rx-meta">
@@ -550,6 +626,8 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
             <p class="desc">Ensemble of an SE-dilated CNN and a residual DFENet, adapted by signal-to-noise ratio, for automatic modulation classification under fading channels.</p>
           </div>
         </div>
+
+        <div class="figwide lit"><img src="images/fig-amc-pipeline.png" alt="AMC pipeline: RadioML 2018.01A and HisarMod 2019.1 through AWGN, Rayleigh and Rician channels, into parallel SE-dilated CNN and DFE branches combined by an SNR-adaptive ensemble"></div>
 
         <div class="rx-block">
           <h4>Key contributions</h4>
@@ -568,75 +646,83 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
       <span class="mono sub-label">Projects</span>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — RTL block diagram or PnR view</span></div>
         <div>
           <h3>12-bit Rotator</h3>
           <p class="proj-meta mono">Dec 2024 · Cadence, EDA Playground</p>
           <p>RTL design and testbench in SystemVerilog, with synthesis and place-and-route in Cadence. Timing and functional coverage verified.</p>
+          <a class="report" href="https://drive.google.com/file/d/1C6GlVd9eV91iVLU1EOBFDyh-02ce8lUs/view?usp=sharing" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — RTL block diagram or PnR view</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — tracker rig or yield comparison</span></div>
         <div>
           <h3>Dual-Axis MPPT Solar Tracker</h3>
           <p class="proj-meta mono">Dec 2024 · Arduino UNO, TinkerCAD</p>
           <p>Tracked the maximum power point across both axes using LDR-based feedback, improving energy yield over a fixed-mount baseline.</p>
+          <a class="report" href="https://drive.google.com/file/d/1KLSeVhNsht7wOqLXATDdYXCWg9f1P5yV/view?usp=drive_link" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — tracker rig or yield plot</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — bandgap schematic or TC curve</span></div>
         <div>
           <h3>Bandgap Reference Voltage Generator</h3>
           <p class="proj-meta mono">Jan 2024 · Cadence</p>
           <p>900 mV reference with 20 ppm/°C temperature coefficient, integrating CTAT and PTAT generators, cascode current mirrors, and active noise filtering.</p>
+          <a class="report" href="https://drive.google.com/file/d/1n9-bnaGvpEMaReIdmSl0U_5QM70gHGGo/view?usp=sharing" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — schematic or TC curve</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — single-line diagram</span></div>
         <div>
           <h3>Electrical Service Design</h3>
           <p class="proj-meta mono">Dec 2024 · AutoCAD</p>
           <p>Full electrical layout for a 10-storey, 2-unit residential building, covering distribution, wiring, and safety compliance.</p>
+          <a class="report" href="https://drive.google.com/file/d/1fKXtexuGU6Q887EKFmUW45AmskYaskAf/view?usp=drive_link" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — single-line diagram</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — machine build or engraved sample</span></div>
         <div>
           <h3>Multi-functional CNC Machine</h3>
           <p class="proj-meta mono">Jul 2023 · Arduino, CNC Shield, laserGRBL</p>
           <p>Three-axis CNC supporting drawing, laser engraving, and material cutting, driven by G-code through laserGRBL.</p>
+          <a class="report" href="https://drive.google.com/file/d/1JqNsjYDqIGzv2c4VzfzPKJV0TnFoYnve/view?usp=drive_link" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — machine build or engraving</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — PCB render or board photo</span></div>
         <div>
           <h3>STM32 Blue Pill Dev Board</h3>
           <p class="proj-meta mono">Jul 2023 · STM32CubeIDE, Altium</p>
           <p>Low-cost Nucleo replacement with GPIO, Timer, EXTI, ADC, and SysTick configured, on a custom PCB laid out in Altium.</p>
+          <a class="report" href="https://drive.google.com/file/d/1Gr4SpN82ekdbd3JPBZgj-nw3d4RftXHK/view?usp=drive_link" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — PCB render or board photo</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — schematic or hardware setup</span></div>
         <div>
           <h3>4-bit ALU with Memory</h3>
           <p class="proj-meta mono">Jul 2023 · Proteus, logic gates</p>
           <p>IC-gate-based arithmetic logic unit with register memory, simulated in Proteus and verified on hardware.</p>
+          <a class="report" href="https://drive.google.com/file/d/1QQdJpP4V22yRsT-alrwd3THUs_cE2e_w/view?usp=drive_link" target="_blank" rel="noopener">View report &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — schematic or hardware setup</span></div>
       </article>
 
       <article class="proj">
-        <div class="fig"><span class="mono">Figure — gameplay screenshot</span></div>
         <div>
           <h3>Ping Pong Game</h3>
           <p class="proj-meta mono">2022 · MATLAB</p>
           <p>Interactive game with real-time collision physics and score tracking.</p>
+          <a class="report" href="https://github.com/J-H-OSSAIN/matlab_project-" target="_blank" rel="noopener">View code &#8599;</a>
         </div>
+        <div class="fig"><span class="mono">Figure — gameplay screenshot</span></div>
       </article>
 
     </div>
@@ -645,9 +731,9 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
   <!-- ============ 04 PUBLICATIONS ============ -->
   <section id="publications">
     <div class="wrap">
-      <div class="eyebrow"><span class="mono">§ 03 — The record</span></div>
+      <div class="eyebrow"><span class="mono">§ 03 — Publications</span></div>
       <h2>Publications</h2>
-      <p style="margin-bottom:2rem">Peer-reviewed work and manuscripts under review. Replace the placeholder rows below with your full list.</p>
+      <p style="margin-bottom:2rem">Peer-reviewed work and manuscripts under review.</p>
 
       <div class="pub-group">
         <span class="mono">Journal</span>
@@ -658,7 +744,7 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
               <div class="title"><a href="https://arxiv.org/abs/2509.05690">Harnessing Topological Valley-Hall States in Photonic Crystals for Label-Free Refractive-Index Discrimination of Cancer Cell Lines</a></div>
               <div class="authors"><span class="me">J. Hossain</span>, S. M. Choudhury, and M. I. H. Bhuiyan</div>
             </div>
-            <span class="venue">Next Materials, Elsevier · under review · arXiv:2509.05690</span>
+            <span class="venue">Under review · arXiv:2509.05690</span>
           </article>
         </div>
       </div>
@@ -695,19 +781,46 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
     </div>
   </section>
 
-  <!-- ============ 04 CONTACT ============ -->
+  <!-- ============ 04 AWARDS ============ -->
+  <section id="awards">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mono">§ 04 — Recognition</span></div>
+      <h2>Awards &amp; Achievements</h2>
+
+      <div class="awards">
+        <div class="award"><span class="yr">2022</span>
+          <p><b>Dean&rsquo;s List Award</b> <span class="where">— EEE, BUET</span></p></div>
+        <div class="award"><span class="yr">2021</span>
+          <p><b>Silver Honor</b> <span class="where">— International Astronomy &amp; Astrophysics Competition (IAAC)</span></p></div>
+        <div class="award"><span class="yr">2019</span>
+          <p><b>National level</b> <span class="where">— Bangladesh Physics Olympiad (BdPhO)</span></p></div>
+        <div class="award"><span class="yr">2019</span>
+          <p><b>59th of 10,000+ candidates</b> <span class="where">— BUET Admission Test</span></p></div>
+        <div class="award"><span class="yr">2019</span>
+          <p><b>1st &mdash; JnU</b> and <b>11th &mdash; SUST</b> <span class="where">— Admission Tests</span></p></div>
+        <div class="award"><span class="yr">2019</span>
+          <p><b>57th of 2,100 students</b> <span class="where">— Notre Dame College, Dhaka</span></p></div>
+        <div class="award"><span class="yr">2017</span>
+          <p><b>2nd Runner-Up</b> <span class="where">— Bangladesh Junior Science Olympiad (BdJSO)</span></p></div>
+        <div class="award"><span class="yr">&mdash;</span>
+          <p><b>Board Scholarships</b> <span class="where">— PSC, JSC</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 CONTACT ============ -->
   <section id="contact">
     <div class="wrap">
-      <div class="eyebrow"><span class="mono">§ 04 — Correspondence</span></div>
-      <h2>Working on something<br>similar? <em style="font-family:var(--display);font-style:italic;color:var(--accent)">Write to me.</em></h2>
-      <p>Happy to talk about converter architectures, PLL debugging, photonic band structures, or PhD applications.</p>
+      <div class="eyebrow"><span class="mono">§ 05 — Contact</span></div>
+      <h2>Get in touch</h2>
+      <p>Open to research collaborations and PhD opportunities in analog IC design and photonics.</p>
 
       <a class="mailto" href="mailto:junayethossain260@gmail.com">junayethossain260@gmail.com</a>
 
       <div class="links">
-        <a href="#"><strong>LinkedIn</strong><span>Profile</span></a>
-        <a href="#"><strong>Scholar</strong><span>Google Scholar</span></a>
-        <a href="#"><strong>GitHub</strong><span>Repositories</span></a>
+        <a href="https://www.linkedin.com/in/junayet-hossain-a4bb9b34b/" target="_blank" rel="noopener"><strong>LinkedIn</strong><span>Profile</span></a>
+        <a href="https://scholar.google.com/citations?user=zFaVwYsAAAAJ&amp;hl=en" target="_blank" rel="noopener"><strong>Scholar</strong><span>Google Scholar</span></a>
+        <a href="https://github.com/J-H-OSSAIN" target="_blank" rel="noopener"><strong>GitHub</strong><span>Repositories</span></a>
         <a href="#"><strong>CV</strong><span>Download PDF</span></a>
       </div>
     </div>
@@ -722,7 +835,46 @@ footer.site{border-top:1px solid var(--rule);padding-block:2.5rem;display:flex;j
 
 </main>
 
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged figure">
+  <button class="close" type="button" aria-label="Close">&#10005;</button>
+  <img src="" alt="">
+</div>
+
 <script>
+(function(){
+  var t = document.getElementById('navToggle');
+  var list = document.getElementById('navList');
+  t.addEventListener('click', function(){
+    var open = list.classList.toggle('open');
+    t.setAttribute('aria-expanded', open);
+    t.textContent = open ? 'Close' : 'Menu';
+  });
+  list.addEventListener('click', function(e){
+    if(e.target.tagName === 'A'){
+      list.classList.remove('open');
+      t.setAttribute('aria-expanded', false);
+      t.textContent = 'Menu';
+    }
+  });
+})();
+
+(function(){
+  var box = document.getElementById('lightbox');
+  var big = box.querySelector('img');
+  document.querySelectorAll('.rx .fig img, .figwide img, .slides .stage img, .proj .fig img').forEach(function(im){
+    im.classList.add('zoomable');
+    im.addEventListener('click', function(){
+      big.src = im.src;
+      big.alt = im.alt;
+      box.classList.add('open');
+    });
+  });
+  function shut(){ box.classList.remove('open'); big.src = ''; }
+  box.addEventListener('click', shut);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') shut();
+  });
+})();
 (function(){
   var box = document.getElementById('journalSlides');
   if(!box) return;
